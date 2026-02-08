@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Be My Valentine?</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: "Comic Sans MS", cursive, sans-serif;
+      overflow: hidden;
+      background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+      position: relative;
+    }
+
+    .card {
+      background: white;
+      padding: 40px;
+      border-radius: 20px;
+      text-align: center;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+      position: relative;
+      width: 350px;
+      height: 400px;
+      z-index: 1;
+    }
+
+    .heart {
+      font-size: 80px;
+      animation: beat 1s infinite;
+    }
+
+    @keyframes beat {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+    }
+
+    h1 {
+      margin: 20px 0;
+      color: #e6005c;
+    }
+
+    button {
+      margin: 10px;
+      padding: 12px 25px;
+      font-size: 18px;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .yes {
+      background: #ff4d6d;
+      color: white;
+    }
+
+    .yes:hover {
+      background: #e6005c;
+    }
+
+    .no {
+      background: #ddd;
+      position: absolute;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <div class="heart">❤️</div>
+    <h1>Janel Will you be my Valentine?</h1>
+    <button class="yes" onclick="yesClicked()">Yes 💕</button>
+    <button class="no" id="noBtn">No 💔</button>
+  </div>
+
+  <script>
+    const noBtn = document.getElementById("noBtn");
+    const card = document.querySelector(".card");
+
+    // Initialize No button
+    noBtn.style.position = "absolute";
+    noBtn.style.left = noBtn.offsetLeft + "px";
+    noBtn.style.top = noBtn.offsetTop + "px";
+
+    let btnX = parseFloat(noBtn.style.left);
+    let btnY = parseFloat(noBtn.style.top);
+    let mouseX = 0;
+    let mouseY = 0;
+
+    card.addEventListener("mousemove", (e) => {
+      const cardRect = card.getBoundingClientRect();
+      mouseX = e.clientX - cardRect.left;
+      mouseY = e.clientY - cardRect.top;
+    });
+
+    // Animate No button with predictive dodge
+    function animateButton() {
+      const btnWidth = noBtn.offsetWidth;
+      const btnHeight = noBtn.offsetHeight;
+      const parentWidth = card.clientWidth;
+      const parentHeight = card.clientHeight;
+
+      const centerX = btnX + btnWidth / 2;
+      const centerY = btnY + btnHeight / 2;
+
+      let dx = centerX - mouseX;
+      let dy = centerY - mouseY;
+      const distance = Math.sqrt(dx*dx + dy*dy);
+
+      if (distance < 150) {
+        const speed = (150 - distance) / 3;
+        dx = (dx / distance) * speed;
+        dy = (dy / distance) * speed;
+
+        const swerveX = (Math.random() - 0.5) * 10;
+        const swerveY = (Math.random() - 0.5) * 10;
+
+        btnX += dx + swerveX;
+        btnY += dy + swerveY;
+
+        // Keep inside card
+        btnX = Math.min(Math.max(btnX, 0), parentWidth - btnWidth);
+        btnY = Math.min(Math.max(btnY, 0), parentHeight - btnHeight);
+
+        noBtn.style.left = btnX + "px";
+        noBtn.style.top = btnY + "px";
+      }
+
+      requestAnimationFrame(animateButton);
+    }
+
+    animateButton();
+
+    // Yes button clicked
+    function yesClicked() {
+      document.body.innerHTML = `
+        <div style="
+          position: relative;
+          height: 100vh;
+          font-family: Comic Sans MS, cursive;
+          background: url('vdayphoto.jpeg') no-repeat center center;
+          background-size: cover;
+          overflow-y: auto; /* ensures all content visible */
+          text-align: center;
+        ">
+          <!-- Overlay for readability -->
+          <div style="
+            position:absolute;
+            top:0; left:0;
+            width:100%; height:100%;
+            background-color: rgba(0,0,0,0.4);
+            z-index:0;
+          "></div>
+
+          <!-- Content container pushed lower -->
+          <div style="
+            position: relative;
+            z-index:1;
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            justify-content:flex-start;
+            padding-top:150px; /* pushes everything lower */
+            padding-bottom:50px; /* ensures bottom content visible */
+          ">
+            <h1 style="color:#fff; font-size:48px;">YAY😍😍😍!!!</h1>
+            <p style="font-size:24px; color:#fff;">You picked the right answer babygirl 🥰</p>
+
+            <img src="https://media.giphy.com/media/Gpqk76tiVKjn2/giphy.gif" 
+                 style="max-width:200px; border-radius:20px; margin-top:30px;">
+
+            <!-- Spotify embed directly -->
+            <div id="spotifyContainer" style="margin-top:50px; z-index:1; position:relative;">
+              <iframe style="border-radius:12px;" 
+                src="https://open.spotify.com/embed/track/41CJn3Q0pJwcNHbF8RM2QE" 
+                width="300" height="80" frameborder="0" allow="encrypted-media" allowfullscreen></iframe>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+  </script>
+
+</body>
+</html>
